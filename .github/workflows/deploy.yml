@@ -11,7 +11,7 @@ env:
   ECS_CLUSTER: kelp
   ECS_SERVICE: kelp-service-xsao6eyu
   CONTAINER_NAME: kelp
-  ECS_TASK_DEFINITION: kelp
+  IMAGE_TAG: latest
 
 jobs:
   deploy:
@@ -34,34 +34,13 @@ jobs:
           aws ecr-public get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin public.ecr.aws
 
       - name: Build, tag, and push image to Amazon ECR Public
-        env:
-          IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Download existing task definition
+      - name: Force new deployment in ECS
         run: |
-          aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION \
-            --query taskDefinition > task-definition.json
-
-      - name: Remove invalid enableFaultInjection key from task definition
-        run: |
-          jq 'del(.containerDefinitions[].enableFaultInjection)' task-definition.json > clean-task-definition.json
-
-      - name: Render new task definition
-        id: render-task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: clean-task-definition.json
-          container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-
-      - name: Deploy to Amazon ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.render-task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+          aws ecs update-service \
+            --cluster $ECS_CLUSTER \
+            --service $ECS_SERVICE \
+            --force-new-deployment

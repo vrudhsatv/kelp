@@ -36,12 +36,12 @@ jobs:
 
       - name: Build, tag, and push backend image to Amazon ECR Public
         run: |
-          docker build -t $ECR_REGISTRY/$BACKEND_IMAGE:$IMAGE_TAG ./backend
+          docker build -t $ECR_REGISTRY/$BACKEND_IMAGE:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$BACKEND_IMAGE:$IMAGE_TAG
 
       - name: Build, tag, and push NGINX image to Amazon ECR Public
         run: |
-          docker build -t $ECR_REGISTRY/$NGINX_IMAGE:$IMAGE_TAG ./nginx
+          docker build -t $ECR_REGISTRY/$NGINX_IMAGE:$IMAGE_TAG ./nginx 
           docker push $ECR_REGISTRY/$NGINX_IMAGE:$IMAGE_TAG
 
       - name: Force new deployment in ECS

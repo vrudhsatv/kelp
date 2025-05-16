@@ -7,11 +7,12 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: public.ecr.aws/z0v5v7u9/kelp
+  ECR_REGISTRY: public.ecr.aws/z0v5v7u9
+  BACKEND_IMAGE: kelp
+  NGINX_IMAGE: nginx
+  IMAGE_TAG: latest
   ECS_CLUSTER: kelp
   ECS_SERVICE: kelp-service-xsao6eyu
-  CONTAINER_NAME: kelp
-  IMAGE_TAG: latest
 
 jobs:
   deploy:
@@ -33,10 +34,15 @@ jobs:
         run: |
           aws ecr-public get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin public.ecr.aws
 
-      - name: Build, tag, and push image to Amazon ECR Public
+      - name: Build, tag, and push backend image to Amazon ECR Public
         run: |
-          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $ECR_REGISTRY/$BACKEND_IMAGE:$IMAGE_TAG ./backend
+          docker push $ECR_REGISTRY/$BACKEND_IMAGE:$IMAGE_TAG
+
+      - name: Build, tag, and push NGINX image to Amazon ECR Public
+        run: |
+          docker build -t $ECR_REGISTRY/$NGINX_IMAGE:$IMAGE_TAG ./nginx
+          docker push $ECR_REGISTRY/$NGINX_IMAGE:$IMAGE_TAG
 
       - name: Force new deployment in ECS
         run: |

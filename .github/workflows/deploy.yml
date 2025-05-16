@@ -46,11 +46,15 @@ jobs:
           aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION \
             --query taskDefinition > task-definition.json
 
+      - name: Remove invalid enableFaultInjection key from task definition
+        run: |
+          jq 'del(.containerDefinitions[].enableFaultInjection)' task-definition.json > clean-task-definition.json
+
       - name: Render new task definition
         id: render-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition.json
+          task-definition: clean-task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 

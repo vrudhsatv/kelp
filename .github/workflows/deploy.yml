@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: kelp
+  ECR_REPOSITORY: public.ecr.aws/z0v5v7u9/kelp
   ECS_CLUSTER: kelp
   ECS_SERVICE: kelp-service-xsao6eyu
   CONTAINER_NAME: kelp
@@ -64,4 +64,3 @@ jobs:
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
 
-          

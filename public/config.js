@@ -7,8 +7,8 @@ var app = require('express');
 var db_config = {
    user: 'root',
    password: 'root',
-   server: 'localhost', // You can use 'localhost\\instance' to connect to named instance
-   database: 'myfirstdatabase',
+   host: '10.0.3.167', // You can use 'localhost\\instance' to connect to named instance
+   database: 'my_db',
    port: 3306
 }
 

@@ -57,4 +57,4 @@
   3. APIs are written in *app.js* from where it maps CRUD method of *query.js* file, which is responsible to communicate with database
 
 ## Live demo on:
-  *https://node-sql.herokuapp.com/*
+  *http://kelp-516121106.us-east-1.elb.amazonaws.com:8080/*

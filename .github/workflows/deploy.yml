@@ -12,7 +12,7 @@ env:
   NGINX_IMAGE: nginx
   IMAGE_TAG: latest
   ECS_CLUSTER: kelp
-  ECS_SERVICE: kelp-service-xsao6eyu
+  ECS_SERVICE: kelp-service-x8ebg4lj
 
 jobs:
   deploy:
